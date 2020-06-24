@@ -8,6 +8,7 @@ class OnlineGameManager extends GameManager {
 
     constructor(playerName: string, playerRegisteredCallback: Function, gameStartCallback: Function, gameWaitingCallback: Function, moveMadeCallback: Function) {
         super(playerName, playerRegisteredCallback, gameStartCallback, gameWaitingCallback, moveMadeCallback)
+        this.isOnlineGame = true;
     }
 
     connect() {
@@ -39,7 +40,7 @@ class OnlineGameManager extends GameManager {
                     this.game = obj.game;
                     switch (obj.game.status) {
                         case GameStatus.WAITING_FOR_PLAYERS:
-                            this.gameWaitingCallback();
+                            this.gameWaitingCallback(obj.game.gameId);
                             break;
                     }
                     break;
@@ -76,7 +77,7 @@ class OnlineGameManager extends GameManager {
 
         console.log(data)
 
-        if (data[key[0]][key[1]] == this.EMPTY) {
+        if (data[key[0]][key[1]] == this.EMPTY_CELL) {
             legalMove = true
         }
 
@@ -127,6 +128,13 @@ class OnlineGameManager extends GameManager {
         } else {
             this.xo = "x";
         }
+    }
+
+    getGameId() {
+        if (this.game != null && this.game.gameId != null) {
+            return this.game.gameId;
+        }
+        return ""
     }
 }
 

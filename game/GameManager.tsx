@@ -3,7 +3,7 @@ import { Game, Player, MessageTypes, GameStatus } from '../game/model';
 abstract class GameManager {
 
     EMPTY = "-";
-    EMPTY_CELL = "-";
+    EMPTY_CELL = " ";
     game: Game;
     player: Player;
     xo: string;
@@ -12,6 +12,7 @@ abstract class GameManager {
     gameStartCallback: Function;
     gameWaitingCallback: Function;
     moveMadeCallback: Function;
+    isOnlineGame = false;
 
     constructor(playerName: string, playerRegisteredCallback: Function, gameStartCallback: Function, gameWaitingCallback: Function, moveMadeCallback: Function) {
         this.game = new Game();
@@ -36,15 +37,17 @@ abstract class GameManager {
 
         let data = this.game.positions.map(k => k.map(i => {
             console.log(i)
-            if (i != this.EMPTY) {
+            if (i == this.EMPTY || i == this.EMPTY_CELL) {
                 return this.EMPTY_CELL
-            } else {
-                return this.xoMap[i] ? this.xoMap[i] : i
+            } else if(this.isOnlineGame){
+                return  this.xoMap[i]
+            }else{
+                return i
             }
         }))
 
         console.log(data)
-        return data
+        return [...data]
     }
 
     abstract makeMove(key: number[]);
@@ -62,6 +65,10 @@ abstract class GameManager {
             }
         }
         return false;
+    }
+
+    getToMove() {
+        return this.xo;
     }
 
     switchMove() {
