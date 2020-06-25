@@ -4,10 +4,17 @@ import TModal from '../TModal'
 import QRCode from 'react-native-qrcode-generator';
 
 const onShareLinkPress = (gameId: string, playerName: string) => {
+    var SendIntentAndroid = require("react-native-send-intent");
+    console.log(gameId)
+    SendIntentAndroid.sendText({
+        title: "Share link to join",
+        text: "Hi! Join " + playerName + "'s game \r\n https://ticitacatoey.com/join/" + gameId.trim(),
+        type: SendIntentAndroid.TEXT_PLAIN,
+    });
 
 }
 
-export default function LoadingGameModal({ isLoading, text, showQR, gameId, playerName }) {
+export default function LoadingGameModal({ isLoading, text, showQR, gameId, playerName, dismiss }) {
     const screenWidth = Math.round(Dimensions.get('window').width);
     const readyToShowQR = (showQR && gameId != "");
 
@@ -15,17 +22,17 @@ export default function LoadingGameModal({ isLoading, text, showQR, gameId, play
         <TModal animationType='fade' visible={isLoading} transparent={true} >
             <View style={[styles.modalContent,]}>
                 <Text style={styles.text}>{text}</Text>
-                <View style={styles.qrCodeModal}>
-                    {readyToShowQR ?
-                        <View>
-                            <QRCode value={gameId} />
-                            <Text style={styles.qrCodeText}>Scan this QR Code on your friend's app to join</Text>
-                        </View>
-                        : <></>}
-                </View>
+                {readyToShowQR ?
+                    <View style={styles.qrCodeModal}>
+                        <QRCode value={gameId} />
+                        <Text style={styles.qrCodeText}>Scan this QR Code on your friend's app to join</Text>
+                    </View>
+                    : <></>}
                 {readyToShowQR ?
                     <Button title={"Share link to join"} onPress={() => { onShareLinkPress(gameId, playerName) }}></Button>
                     : <></>}
+                <Button title={"Exit"} onPress={() => { dismiss() }}></Button>
+
             </View>
 
         </TModal >
@@ -59,6 +66,7 @@ const styles = StyleSheet.create({
     qrCodeModal: {
         flexDirection: 'row',
         margin: 5,
+        marginBottom: 15,
         padding: 5,
         justifyContent: "center",
         borderRadius: 20,

@@ -79,6 +79,14 @@ abstract class GameManager {
             this.xo = "x";
         }
     }
+
+    
+    getGameId() {
+        if (this.game != null && this.game.gameId != null) {
+            return this.game.gameId;
+        }
+        return ""
+    }
 }
 
 export default GameManager;

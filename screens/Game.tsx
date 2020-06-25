@@ -63,7 +63,7 @@ class GameScreen extends Component<GameScreenProps, GameScreenStates> {
             boardSize: this.props.route.params.boardSize,
             playerCount: this.props.route.params.playerCount,
             hostGame: this.props.route.params.hostGame,
-            
+
         };
 
         this.onSquareClicked = this.onSquareClicked.bind(this)
@@ -175,11 +175,18 @@ class GameScreen extends Component<GameScreenProps, GameScreenStates> {
             isYourMove: isItReally
         })
     }
-    
+
     render() {
         return (
             <View style={styles.container}>
-                <LoadingGameModal isLoading={this.state.isLoading} showQR={this.state.showQR} text={this.state.toastText} gameId={this.state.gameId} playerName={this.state.playerName} />
+                <LoadingGameModal isLoading={this.state.isLoading} showQR={this.state.showQR}
+                    text={this.state.toastText} gameId={this.state.gameId} playerName={this.state.playerName}
+                    dismiss={() => {
+                        this.setState({
+                            isLoading: false,
+                        })
+                        this.props.navigation.goBack()
+                    }} />
                 <Grid size={3} data={this.state.boardData} pseudoData={this.state.pseudoBoardData} onGridSquarePressed={(key) => this.onSquareClicked(key)} />
             </View >
         )
