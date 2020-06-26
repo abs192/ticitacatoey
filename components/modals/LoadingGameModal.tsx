@@ -8,7 +8,7 @@ const onShareLinkPress = (gameId: string, playerName: string) => {
     console.log(gameId)
     SendIntentAndroid.sendText({
         title: "Share link to join",
-        text: "Hi! Join " + playerName + "'s game \r\n https://ticitacatoey.com/join/" + gameId.trim(),
+        text: "Hi! Join " + playerName + "'s game \r\n https://ticitacatoey.com/play/" + gameId.trim(),
         type: SendIntentAndroid.TEXT_PLAIN,
     });
 

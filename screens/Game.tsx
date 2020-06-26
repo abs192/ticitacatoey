@@ -5,11 +5,14 @@ import LoadingGameModal from '../components/modals/LoadingGameModal';
 import GameManager from '../game/GameManager';
 import OnlineGameManager from '../game/OnlineGameManager';
 import OfflineGameManager from '../game/OfflineGameManager';
+import { GameScreenStartType } from '../game/model';
 
 interface GameScreenProps {
     navigation: any,
+    route: any,
     isOnlineGame: boolean,
-    hostGame: boolean,
+    gameScreenStartType: GameScreenStartType,
+    gameId: string,
     boardSize: number,
     playerCount: number,
 };
@@ -28,15 +31,14 @@ interface GameScreenStates {
     isOnlineGame: boolean,
     boardSize: number,
     playerCount: number,
-    hostGame: boolean,
-
+    gameScreenStartType: GameScreenStartType,
 };
 
 class GameScreen extends Component<GameScreenProps, GameScreenStates> {
 
     gameManager: GameManager;
 
-    constructor(props) {
+    constructor(props: any) {
         super(props);
         console.log(this.props.route.params);
 
@@ -49,31 +51,32 @@ class GameScreen extends Component<GameScreenProps, GameScreenStates> {
                 data[i].push(" ")
             }
         }
+
         this.state = {
             boardData: [...data],
             pseudoBoardData: [...data],
             playerName: "abs", // get from props later
             isLoading: true,
-            gameId: "",
             toastText: "Connecting",
             showQR: true,
             gameStarted: false,
             isYourMove: true,
             isOnlineGame: this.props.route.params.isOnlineGame,
+            gameScreenStartType: this.props.route.params.gameScreenStartType,
+            gameId: this.props.route.params.gameId,
             boardSize: this.props.route.params.boardSize,
             playerCount: this.props.route.params.playerCount,
-            hostGame: this.props.route.params.hostGame,
-
         };
 
         this.onSquareClicked = this.onSquareClicked.bind(this)
         this.playerRegistered = this.playerRegistered.bind(this)
-        this.startNewGame = this.startNewGame.bind(this)
         this.gameHasStarted = this.gameHasStarted.bind(this)
         this.gameWaiting = this.gameWaiting.bind(this)
         this.updateYourMove = this.updateYourMove.bind(this)
         this.moveWasMade = this.moveWasMade.bind(this)
         this.gameEnded = this.gameEnded.bind(this)
+
+        this.updateBoard = this.updateBoard.bind(this)
 
         // TODO: use factory or some shit
         if (this.state.isOnlineGame) {
@@ -85,37 +88,52 @@ class GameScreen extends Component<GameScreenProps, GameScreenStates> {
 
     componentDidMount() {
         console.log('mount')
+        if (!this.state.isOnlineGame) {
+            this.gameManager.connect()
+        }
+        // TODO: need promise here
         this.gameManager.connect()
-        // (async () => {
-        //     const { status } = await BarCodeScanner.requestPermissionsAsync();
-        //     this.setState({
-        //         scanned:
-        //             (status === 'granted')
-        //     })
-        // })
+
     }
 
 
     playerRegistered() {
-        this.startNewGame()
-    }
+        switch (this.state.gameScreenStartType) {
+            case GameScreenStartType.HOST:
 
-    startNewGame() {
+                // TODO: build from props 
         // TODO: build from props 
-        let startGameInput = {
-            name: this.state.playerName,
-            boardSize: 3,
-            playerCount: 2,
+                // TODO: build from props 
+                let startGameInput = {
+                    name: this.state.playerName,
+                    boardSize: 3,
+                    playerCount: 2,
+                }
+                this.gameManager.startGame(startGameInput)
+                break;
+            case GameScreenStartType.JOIN:
+                this.setState({
+                    toastText: "Joining game",
+                    showQR: false,
+                })
+                this.setState({
+                    toastText: "Joining game",
+                    showQR: false,
+                })
+                this.gameManager.joinGame(this.state.gameId)
+                break;
         }
-        this.gameManager.startGame(startGameInput)
     }
 
-    gameHasStarted() {
+
+    gameHasStarted(boardData: string[][], playerCount: number) {
         this.setState({
             gameStarted: true,
             isYourMove: true,
             isLoading: false,
+            playerCount: playerCount
         })
+        this.updateBoard(boardData)
     }
 
     gameWaiting(gameId: string) {
@@ -127,24 +145,23 @@ class GameScreen extends Component<GameScreenProps, GameScreenStates> {
 
     }
 
-    moveWasMade(data: string[][]) {
-        console.log("move made ")
-        console.log(data)
-        console.log(this.state.boardData)
-
-        //TODO: find cleaner way to do this later
+    updateBoard(data: string[][]) {
         var newData = this.state.boardData
         data.forEach((value, index) => {
             value.forEach((val, i) => {
                 newData[index][i] = val
             })
         })
-
         this.setState({
             boardData: [...newData],
+        })
+    }
+
+    moveWasMade(data: string[][]) {
+        this.updateBoard(data);
+        this.setState({
             isLoading: false,
         })
-        console.log(this.state.boardData)
     }
 
     gameEnded() {
@@ -158,12 +175,12 @@ class GameScreen extends Component<GameScreenProps, GameScreenStates> {
     onSquareClicked(key: number[]) {
         if (this.state.gameStarted) {
 
-            var newData = [...this.state.pseudoBoardData]
-            newData[key[0]][key[1]] = this.gameManager.getToMove();
+            // var newData = [...this.state.pseudoBoardData]
+            // newData[key[0]][key[1]] = this.gameManager.getToMove();
 
-            this.setState({
-                pseudoBoardData: [...newData],
-            })
+            // this.setState({
+            //     pseudoBoardData: [...newData],
+            // })
 
             console.log("pressed " + key)
             this.gameManager.makeMove(key)
@@ -187,7 +204,7 @@ class GameScreen extends Component<GameScreenProps, GameScreenStates> {
                         })
                         this.props.navigation.goBack()
                     }} />
-                <Grid size={3} data={this.state.boardData} pseudoData={this.state.pseudoBoardData} onGridSquarePressed={(key) => this.onSquareClicked(key)} />
+                <Grid size={3} data={this.state.boardData} pseudoData={this.state.pseudoBoardData} onGridSquarePressed={(key: number[]) => this.onSquareClicked(key)} />
             </View >
         )
     }

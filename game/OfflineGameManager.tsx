@@ -35,7 +35,7 @@ class OfflineGameManager extends GameManager {
             "p1": "x",
             "p2": "o",
         }
-        this.gameStartCallback()
+        this.gameHasStartedCallback(this.game.positions, this.game.playerCount)
     }
 
     generateBoard(boardSize: number) {
@@ -78,6 +78,9 @@ class OfflineGameManager extends GameManager {
     }
 
     startGame(startGameInput) {
+    }
+
+    joinGame(joinGameInput) {
     }
 
     gameEnd() {

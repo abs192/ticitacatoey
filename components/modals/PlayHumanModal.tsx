@@ -2,12 +2,15 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import TButton from '../../components/TButton'
 
-export default function PlayHumanModal({ onHostClicked, onSearchClicked }) {
+export default function PlayHumanModal({ onHostClicked, onScanClicked, onSearchClicked }) {
 
     return (
         <View style={styles.container}>
             <View style={styles.buttonStyle}>
                 <TButton text="Host" onPress={onHostClicked}></TButton>
+            </View>
+            <View style={styles.buttonStyle}>
+                <TButton text="Scan" onPress={onScanClicked}></TButton>
             </View>
             <View style={styles.buttonStyle}>
                 <TButton text="Search" onPress={onSearchClicked}></TButton>
@@ -21,7 +24,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 15,
         flexDirection: 'row',
-        backgroundColor:"#556",
+        backgroundColor: "#556",
         alignContent: 'center',
         justifyContent: 'center',
     },

@@ -9,18 +9,18 @@ abstract class GameManager {
     xo: string;
     xoMap: {};
     playerRegisteredCallback: Function;
-    gameStartCallback: Function;
+    gameHasStartedCallback: Function;
     gameWaitingCallback: Function;
     moveMadeCallback: Function;
     isOnlineGame = false;
 
-    constructor(playerName: string, playerRegisteredCallback: Function, gameStartCallback: Function, gameWaitingCallback: Function, moveMadeCallback: Function) {
+    constructor(playerName: string, playerRegisteredCallback: Function, gameHasStartedCallback: Function, gameWaitingCallback: Function, moveMadeCallback: Function) {
         this.game = new Game();
         this.xo = "x";
         this.xoMap = {};
         this.player = { name: playerName, playerId: "" };
         this.playerRegisteredCallback = playerRegisteredCallback;
-        this.gameStartCallback = gameStartCallback;
+        this.gameHasStartedCallback = gameHasStartedCallback;
         this.gameWaitingCallback = gameWaitingCallback;
         this.moveMadeCallback = moveMadeCallback;
     }
@@ -55,6 +55,8 @@ abstract class GameManager {
     abstract registerPlayer();
 
     abstract startGame(startGameInput);
+
+    abstract joinGame(joinGameInput);
 
     abstract gameEnd();
 

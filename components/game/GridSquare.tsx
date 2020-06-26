@@ -10,7 +10,7 @@ export default function GridSquare({ xo, psuedoXO, index, onGridSquarePressed })
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.textContainer} onPress={onSquarePressed}>
-                <Text style={styles.pseudoText}>{psuedoXO}</Text>
+                {/* <Text style={styles.pseudoText}>{psuedoXO}</Text> */}
                 <Text style={styles.text}>{xo}</Text>
             </TouchableOpacity>
         </View>

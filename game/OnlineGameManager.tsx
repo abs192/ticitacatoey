@@ -12,7 +12,8 @@ class OnlineGameManager extends GameManager {
     }
 
     connect() {
-        this.ws = new WebSocket('ws://192.168.0.101:8080')
+        // this.ws = new WebSocket('ws://192.168.0.101:8080')
+        this.ws = new WebSocket('ws://192.168.1.8:8080')
         this.ws.onopen = () => {
             console.log('ws open')
             this.registerPlayer()
@@ -54,7 +55,9 @@ class OnlineGameManager extends GameManager {
                             this.xoMap[obj.game.players[0]] = 'x';
                             this.xoMap[obj.game.players[1]] = 'o';
 
-                            this.gameStartCallback();
+                            var boardData = this.getData();
+                            var playerCount = obj.game.playerCount;
+                            this.gameHasStartedCallback(boardData, playerCount);
                             break;
                     }
                     break;
@@ -105,6 +108,12 @@ class OnlineGameManager extends GameManager {
     startGame(startGameInput) {
         let msg = JSON.stringify({ type: MessageTypes.START_GAME, ...startGameInput })
         console.log("starting game msg: " + msg)
+        this.ws?.send(msg)
+    }
+
+    joinGame(gameId: string) {
+        let msg = JSON.stringify({ type: MessageTypes.JOIN_GAME, gameId: gameId })
+        console.log("joining game msg: " + msg)
         this.ws?.send(msg)
     }
 

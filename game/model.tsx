@@ -1,4 +1,4 @@
-interface GameOptions{
+interface GameOptions {
   isOnline: boolean;
   boardSize: number;
 }
@@ -113,11 +113,11 @@ interface RegisterPlayerResponse extends Player {
 
 interface GameActionResponse extends GameState {
   type:
-    | MessageTypes.START_GAME
-    | MessageTypes.JOIN_GAME
-    | MessageTypes.MAKE_MOVE
-    | MessageTypes.SPECTATE_GAME
-    | MessageTypes.GAME_COMPLETE;
+  | MessageTypes.START_GAME
+  | MessageTypes.JOIN_GAME
+  | MessageTypes.MAKE_MOVE
+  | MessageTypes.SPECTATE_GAME
+  | MessageTypes.GAME_COMPLETE;
 }
 
 type Response = RegisterPlayerResponse | GameActionResponse;
@@ -154,6 +154,13 @@ enum GameStatus {
   GAME_ENDS_IN_A_DRAW = "GAME_ENDS_IN_A_DRAW",
 }
 
+enum GameScreenStartType {
+  HOST,
+  JOIN,
+  SPECTATE,
+  SCAN
+}
+
 export {
   Game,
   GameOptions,
@@ -171,4 +178,5 @@ export {
   RegisterPlayerResponse,
   GameActionResponse,
   Response,
+  GameScreenStartType,
 };

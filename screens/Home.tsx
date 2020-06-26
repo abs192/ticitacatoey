@@ -5,12 +5,12 @@ import TModal from '../components/TModal';
 import PlayComputerModal from '../components/modals/PlayComputerModal'
 import PlayHumanModal from '../components/modals/PlayHumanModal'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { GameScreenStartType } from '../game/model';
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
 
     const [showModal, setShowModal] = useState(false);
     const [playComputerModalFlag, setPlayComputerModalFlag] = useState(false);
-
 
     const onSettingsClicked = () => {
         navigation.navigate('Settings')
@@ -18,20 +18,27 @@ export default function Home({ navigation }) {
 
     const onComputerEasyClicked = () => {
         setShowModal(false)
-        navigation.navigate('Game', { isOnlineGame: false, hostGame: true, boardSize: 3, playerCount: 2 })
+        navigation.navigate('Game', { isOnlineGame: false, boardSize: 3, playerCount: 2 })
     };
+
     const onComputerHardClicked = () => {
         setShowModal(false)
         navigation.navigate('Game', { isOnlineGame: false, hostGame: true, boardSize: 3, playerCount: 2 })
-
     };
+
     const onHumanHostClicked = () => {
         setShowModal(false)
         // TODO: take input 
-        navigation.navigate('Game', { isOnlineGame: true, hostGame: true, boardSize: 3, playerCount: 2 })
+        navigation.navigate('Game', { isOnlineGame: true, gameScreenStartType: GameScreenStartType.HOST, boardSize: 3, playerCount: 2 })
     };
+
     const onHumanSearchClicked = () => {
         setShowModal(false)
+    };
+
+    const onHumanScanGameClicked = () => {
+        setShowModal(false)
+        navigation.navigate('QRScan')
     };
 
     const onComputerClicked = () => {
@@ -44,12 +51,20 @@ export default function Home({ navigation }) {
         setShowModal(true)
     };
 
+    React.useEffect(() => {
+        if (route.params?.gameIdToJoin) {
+            console.log('joining gameId: ' + route.params.gameIdToJoin)
+            navigation.navigate('Game', { isOnlineGame: true, gameScreenStartType: GameScreenStartType.JOIN, gameId: route.params.gameIdToJoin })
+        }
+    }, [route.params?.gameIdToJoin]);
+
+
     return (
         <View style={styles.container}>
             <TModal animationType='slide' transparent={true} visible={showModal} dismiss={() => setShowModal(false)}>
                 <View style={styles.modalContent}>
                     {playComputerModalFlag ? <PlayComputerModal onEasyClicked={onComputerEasyClicked} onHardClicked={onComputerHardClicked} /> :
-                        <PlayHumanModal onHostClicked={onHumanHostClicked} onSearchClicked={onHumanSearchClicked} />}
+                        <PlayHumanModal onHostClicked={onHumanHostClicked} onScanClicked={onHumanScanGameClicked} onSearchClicked={onHumanSearchClicked} />}
                 </View>
             </TModal>
             <View style={styles.header}>
